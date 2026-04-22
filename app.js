@@ -5,6 +5,7 @@ let itemNames = [];
 let lastRow = -1, lastCol = -1;
 let usedSlots = 0;
 let editR = -1, editC = -1;
+let selectedR = -1, selectedC = -1;
 
 /* ─── PAGE NAVIGATION ──────────────────────────────────────── */
 function showPage(id) {
@@ -18,6 +19,7 @@ function initialize() {
   itemGrid = Array.from({length: ROWS}, () => Array(COLS).fill(null));
   itemNames= Array.from({length: ROWS}, () => Array(COLS).fill(''));
   usedSlots = 0;
+  selectedR = -1; selectedC = -1;
 }
 
 /* ─── BFS SLOT FINDER ───────────────────────────────────────── */
@@ -74,6 +76,9 @@ function deleteCell(r, c) {
   grid[r][c]      = 0;
   itemGrid[r][c]  = null;
   itemNames[r][c] = '';
+  if (selectedR === r && selectedC === c) {
+    selectedR = -1; selectedC = -1;
+  }
   usedSlots--;
   render();
   logEntry(`✕  ${name} removed from [${r},${c}]`, 'delete');
@@ -106,8 +111,11 @@ function render(newR = -1, newC = -1) {
     row.className = "grid-row";
 
     for (let c = 0; c < COLS; c++) {
+      const slot = document.createElement("div");
+      slot.className = "slot";
       const cell = document.createElement("div");
       cell.className = "cell";
+      cell.innerHTML = `<div class="coord">[${r},${c}]</div>`;
 
       if (grid[r][c] === 0) {
         cell.classList.add("empty");
@@ -117,25 +125,45 @@ function render(newR = -1, newC = -1) {
         cell.classList.add(["light","medium","heavy"][weight]);
         if (priority === 2) cell.classList.add("high-p");
         if (r === newR && c === newC) cell.classList.add("new");
+        if (r === selectedR && c === selectedC) cell.classList.add("selected");
 
         cell.innerHTML = `
           <div class="coord">[${r},${c}]</div>
           <div class="item-name">${itemName}</div>
           <div class="icon">${["🪶","📦","🏋️"][weight]}</div>
           <div class="cell-label">${["LOW","MED","HIGH"][priority]}</div>
-          <div class="cell-actions">
-            <button class="btn-edit">✏ EDIT</button>
-            <button class="btn-delete">✕ DEL</button>
-          </div>
         `;
-
-        /* Attach handlers using closure-safe vars */
-        const rr = r, cc = c;
-        cell.querySelector('.btn-edit').onclick   = e => { e.stopPropagation(); openEdit(rr, cc); };
-        cell.querySelector('.btn-delete').onclick  = e => { e.stopPropagation(); deleteCell(rr, cc); };
       }
 
-      row.appendChild(cell);
+      const occupied = grid[r][c] !== 0;
+      const actions = document.createElement("div");
+      actions.className = "cell-actions";
+      actions.innerHTML = `
+        <button class="btn-edit">✏ EDIT</button>
+        <button class="btn-delete">✕ DEL</button>
+      `;
+
+      const editBtn = actions.querySelector('.btn-edit');
+      const deleteBtn = actions.querySelector('.btn-delete');
+      editBtn.disabled = !occupied;
+      deleteBtn.disabled = !occupied;
+
+      if (occupied) {
+        const rr = r, cc = c;
+        cell.onclick = () => {
+          const sameCell = selectedR === rr && selectedC === cc;
+          selectedR = sameCell ? -1 : rr;
+          selectedC = sameCell ? -1 : cc;
+          render();
+        };
+        if (r === selectedR && c === selectedC) actions.classList.add("visible");
+        editBtn.onclick = e => { e.stopPropagation(); openEdit(rr, cc); };
+        deleteBtn.onclick = e => { e.stopPropagation(); deleteCell(rr, cc); };
+      }
+
+      slot.appendChild(cell);
+      slot.appendChild(actions);
+      row.appendChild(slot);
     }
     root.appendChild(row);
   }
