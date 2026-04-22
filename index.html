@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Smart Warehouse Slot Allocator</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">DSA · BFS</div>
+  <h1>Smart <span>Warehouse</span><br>Slot Allocator</h1>
+  <p class="subtitle">BFS-based intelligent slot allocation</p>
+</header>
+
+<!-- ══════════════════ PAGE 1 : ADD ITEM ══════════════════ -->
+<div id="page1" class="page active">
+  <div class="page1-wrap">
+    <div class="panel">
+      <div class="panel-header">ADD ITEM</div>
+      <div class="panel-body">
+
+        <div class="field">
+          <label>ITEM NAME</label>
+          <input type="text" id="itemName" placeholder="e.g. Motor Parts" />
+        </div>
+
+        <div class="field">
+          <label>WEIGHT CLASS</label>
+          <div class="toggle-group">
+            <input type="radio" name="weight" id="wLight" value="0" checked>
+            <label for="wLight">🪶 LIGHT</label>
+            <input type="radio" name="weight" id="wMedium" value="1">
+            <label for="wMedium">📦 MED</label>
+            <input type="radio" name="weight" id="wHeavy" value="2">
+            <label for="wHeavy">🏋️ HEAVY</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>PRIORITY</label>
+          <div class="toggle-group">
+            <input type="radio" name="priority" id="pLow" value="0" checked>
+            <label for="pLow">▽ LOW</label>
+            <input type="radio" name="priority" id="pMedium" value="1">
+            <label for="pMedium">◈ MED</label>
+            <input type="radio" name="priority" id="pHigh" value="2">
+            <label for="pHigh">▲ HIGH</label>
+          </div>
+        </div>
+
+        <button id="submitBtn">ALLOCATE SLOT →</button>
+        <div id="status"></div>
+
+        <div class="cap-bar-wrap">
+          <div class="cap-bar" id="capBar"></div>
+        </div>
+        <div class="cap-label" id="capLabel">0 / 25 slots used</div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ PAGE 2 : GRID + LOG ══════════════════ -->
+<div id="page2" class="page">
+  <div class="page2-wrap">
+
+    <!-- Top bar: Back | Reset -->
+    <div class="page2-topbar">
+      <button id="backBtn">← BACK</button>
+      <button id="resetBtnGrid">RESET WAREHOUSE</button>
+    </div>
+
+    <!-- Warehouse Grid -->
+    <div class="panel">
+      <div class="panel-header">WAREHOUSE GRID (5 × 5)</div>
+      <div class="panel-body">
+        <div id="gridRoot"></div>
+      </div>
+    </div>
+
+    <!-- Activity Log -->
+    <div class="panel">
+      <div class="panel-header">ACTIVITY LOG</div>
+      <div class="panel-body">
+        <div id="log"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ EDIT MODAL ══════════════════ -->
+<div id="editModal" class="modal-overlay">
+  <div class="modal">
+
+    <div class="modal-title">EDIT SLOT &nbsp;<span id="editCoordLabel"></span></div>
+
+    <div class="field">
+      <label>ITEM NAME</label>
+      <input type="text" id="editItemName" placeholder="e.g. Motor Parts" />
+    </div>
+
+    <div class="field">
+      <label>WEIGHT CLASS</label>
+      <div class="toggle-group">
+        <input type="radio" name="editWeight" id="ewLight" value="0">
+        <label for="ewLight">🪶 LIGHT</label>
+        <input type="radio" name="editWeight" id="ewMedium" value="1">
+        <label for="ewMedium">📦 MED</label>
+        <input type="radio" name="editWeight" id="ewHeavy" value="2">
+        <label for="ewHeavy">🏋️ HEAVY</label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>PRIORITY</label>
+      <div class="toggle-group">
+        <input type="radio" name="editPriority" id="epLow" value="0">
+        <label for="epLow">▽ LOW</label>
+        <input type="radio" name="editPriority" id="epMedium" value="1">
+        <label for="epMedium">◈ MED</label>
+        <input type="radio" name="editPriority" id="epHigh" value="2">
+        <label for="epHigh">▲ HIGH</label>
+      </div>
+    </div>
+
+    <button id="saveEditBtn">SAVE CHANGES</button>
+    <button id="cancelEditBtn">CANCEL</button>
+
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
