@@ -83,6 +83,27 @@ h1 span{
   color:var(--accent);
 }
 
+.grid-title{
+  position:relative;
+  text-align:center;
+}
+
+.door-title-icon{
+  position:absolute;
+  left:0.85rem;
+  top:50%;
+  transform:translateY(-50%);
+  width:22px;
+  height:22px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:var(--surface);
+  color:var(--accent);
+  font-size:0.78rem;
+}
+
 .panel-body{
   padding:1rem;
 }
@@ -161,8 +182,17 @@ input[type="text"]{
 .grid-row{
   display:grid;
   grid-template-columns:repeat(5, var(--cell));
-  gap:5px;
-  margin-bottom:5px;
+  gap:8px;
+  margin-bottom:8px;
+  justify-content:center;
+}
+
+.slot{
+  width:var(--cell);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
 }
 
 .cell{
@@ -177,6 +207,12 @@ input[type="text"]{
   background:var(--surface2);
   position:relative;
   overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.08);
+}
+
+.cell.selected{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px rgba(0,229,255,0.55), inset 0 0 0 1px rgba(0,0,0,0.08);
 }
 
 .coord{
@@ -196,6 +232,18 @@ input[type="text"]{
   font-size:0.6rem;
   color:var(--muted);
   font-family:var(--mono);
+}
+
+.item-name{
+  font-family:var(--mono);
+  font-size:0.56rem;
+  color:var(--text);
+  max-width:92%;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  margin:1px 0 2px;
+  text-align:center;
 }
 
 /* States */
@@ -278,10 +326,18 @@ input[type="text"]{
 /* ─── Page 2 Wrapper ─────────────────────────────────────────── */
 .page2-wrap{
   width:100%;
-  max-width:520px;
+  max-width:560px;
   display:flex;
   flex-direction:column;
   gap:1.5rem;
+  margin:0 auto;
+}
+
+/* Keep grid panel tightly centered on deployment too */
+.page2-wrap > .panel:first-of-type{
+  width:fit-content;
+  max-width:100%;
+  margin-inline:auto;
 }
 
 /* ─── Page 2 Top Bar ─────────────────────────────────────────── */
@@ -327,34 +383,43 @@ input[type="text"]{
 
 /* ─── Cell Action Buttons (Edit / Delete) ────────────────────── */
 .cell-actions{
-  position:absolute;
-  bottom:0;
-  left:0;
-  right:0;
+  width:100%;
+  min-height:18px;
   display:flex;
-  justify-content:center;
+  justify-content:space-between;
   gap:3px;
-  padding:3px 4px;
+  padding:0;
   opacity:0;
-  transition:opacity 0.15s;
-  background:rgba(11,15,26,0.88);
-  border-radius:0 0 6px 6px;
+  transform:translateY(3px) scale(0.96);
+  pointer-events:none;
+  transition:opacity 0.2s ease, transform 0.2s ease;
 }
 
-.cell:hover .cell-actions{
+.cell-actions.visible{
   opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
 }
 
 .btn-edit,
 .btn-delete{
-  border:none;
+  flex:1;
+  border:1px solid transparent;
   border-radius:3px;
-  padding:2px 5px;
+  padding:2px 4px;
   cursor:pointer;
   font-size:0.56rem;
   font-family:var(--mono);
   font-weight:bold;
   letter-spacing:0.02em;
+  transform:scale(1);
+  transition:transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+}
+
+.btn-edit:hover,
+.btn-delete:hover{
+  transform:scale(1.16);
+  filter:brightness(1.05);
 }
 
 .btn-edit{
@@ -365,6 +430,12 @@ input[type="text"]{
 .btn-delete{
   background:var(--red);
   color:#fff;
+}
+
+.btn-edit:disabled,
+.btn-delete:disabled{
+  opacity:0.35;
+  cursor:not-allowed;
 }
 
 /* ─── Edit Modal ─────────────────────────────────────────────── */
@@ -428,6 +499,24 @@ input[type="text"]{
   color:var(--muted);
 }
 
+.grid-panel-body{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.8rem;
+  width:100%;
+  padding-inline:0.9rem;
+}
+
+#gridRoot{
+  width:fit-content;
+  max-width:100%;
+  margin-inline:auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
 @media(max-width:540px){
   .page1-wrap{
     width:100%;
@@ -435,7 +524,28 @@ input[type="text"]{
   .page2-wrap{
     max-width:100%;
   }
+  :root{
+    --cell:70px;
+  }
   .panel-body{
-    overflow-x:auto;
+    padding:0.85rem;
+  }
+  .page2-topbar{
+    flex-wrap:wrap;
+    gap:0.6rem;
+    justify-content:center;
+  }
+  .door-title-icon{
+    left:0.6rem;
+  }
+}
+
+@media(max-width:420px){
+  :root{
+    --cell:62px;
+  }
+  .btn-edit,
+  .btn-delete{
+    font-size:0.52rem;
   }
 }
